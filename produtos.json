@@ -9,6 +9,14 @@
   },
   "produtos": [
     {
+      "id": 2,
+      "nome": "Mesa de Jantar 6 Lugares",
+      "categoria": "Sala",
+      "descricao": "Tampo em MDF com acabamento amadeirado e pés em aço.",
+      "preco": 1890,
+      "imagem": "img/mesa-jantar.jpg"
+    },
+    {
       "id": 1,
       "nome": "Sofá Retrátil 3 Lugares",
       "categoria": "Sala",
@@ -16,14 +24,6 @@
       "preco": 2499.9,
       "imagem": "img/sofa-retratil.jpg",
       "destaque": true
-    },
-    {
-      "id": 2,
-      "nome": "Mesa de Jantar 6 Lugares",
-      "categoria": "Sala",
-      "descricao": "Tampo em MDF com acabamento amadeirado e pés em aço.",
-      "preco": 1890,
-      "imagem": "img/mesa-jantar.jpg"
     },
     {
       "id": 3,
