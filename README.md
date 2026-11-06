@@ -43,7 +43,11 @@ Na primeira vez, gere um token do GitHub (só precisa fazer uma vez):
 3. *Permissions → Repository permissions*: **Contents: Read and write**.
 4. Gere e copie o token.
 
-Depois, abra o `admin.html` e cole só o token. O painel descobre sozinho o repositório e o branch. O token fica salvo só no aparelho; use "Sair" para apagá-lo.
+Depois, abra o `admin.html` e cole o token. O painel descobre sozinho o repositório e o branch.
+
+**Senha do aparelho (recomendado):** na primeira vez, crie também uma senha curta (mínimo 4 caracteres). O token é guardado trancado por ela neste aparelho e, nas próximas vezes, você digita só a senha. Se esquecer a senha, toque em "Usar outro token" e cole o token de novo. Em outro celular ou computador, cole o token e crie uma senha de novo.
+
+**Nunca coloque o token ou senhas em arquivos do site** (nem em `.env`): tudo que está no repositório publicado fica visível para qualquer pessoa. O token só deve ficar no painel, no seu aparelho.
 Se der erro ao entrar, abra "Opções avançadas" e informe usuário e repositório.
 
 No painel você pode:
@@ -55,6 +59,24 @@ No painel você pode:
 Cada salvamento vira um commit no GitHub; o site atualiza em cerca de 1 minuto.
 
 **Segurança:** o token só dá acesso a este repositório. Não compartilhe o token e use "Sair" no painel se estiver em aparelho de outra pessoa. Quem abrir o `admin.html` sem o token não consegue alterar nada.
+
+## Agentes para modificações (Claude Code no VS Code)
+
+O projeto traz três agentes (pasta `.claude/agents/`), o comando `/vitrine` (pasta `.claude/commands/`) e o `CLAUDE.md`. Tudo isso está no `.gitignore`: **fica só no seu computador e não vai para o GitHub**. Se clonar o projeto em outro computador, copie `.claude/` e `CLAUDE.md` junto.
+
+- `vitrine-dev`: faz a modificação, corrige o que os outros apontarem e publica (só com a sua autorização).
+- `design-vitrine-dev`: revisa o visual (erros, coisas feias, "cara de IA") e corrige sozinho.
+- `qa-vitrine-dev`: testa o site e reporta problemas. Não edita nada.
+
+**Como usar**
+1. Abra a pasta do projeto no VS Code e inicie uma sessão nova do Claude Code (agentes e comandos só são lidos ao começar a sessão).
+2. Digite o comando com o pedido, por exemplo: `/vitrine baixe o preço do sofá retrátil para 2299,90 e marque a cama box como destaque`.
+3. O Claude coordena: dev → design (quando a mudança é visual ou de foto) → QA. Se o QA achar problema, volta para o dev corrigir (até 3 voltas).
+4. Você recebe **um único resumo** e escolhe: Publicar, Ajustar ou Descartar. Só publica se você escolher Publicar.
+
+Para testes no navegador (screenshots do design e testes do QA) é preciso o Playwright. Se os agentes avisarem que falta, rode `npx playwright install chromium` (precisa do Node instalado). Sem ele, eles revisam só pelo código e avisam disso no relatório.
+
+O painel `admin.html` continua sendo o jeito mais rápido para trocar foto e preço pelo celular; os agentes são para mudanças maiores (visual, textos, novas seções).
 
 ## Editar sem o painel
 

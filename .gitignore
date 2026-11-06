@@ -1,0 +1,10 @@
+.env
+.env.*
+.DS_Store
+Thumbs.db
+node_modules/
+.claude/settings.local.json
+
+# Arquivos do agente: ficam só no computador do dono (não vão para o GitHub)
+CLAUDE.md
+.claude/
