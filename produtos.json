@@ -1,0 +1,86 @@
+{
+  "loja": {
+    "nome": "Casa & Estilo Móveis",
+    "slogan": "Móveis que transformam sua casa",
+    "whatsapp": "5521999999999",
+    "instagram": "",
+    "endereco": "Rio de Janeiro - RJ",
+    "horario": "Seg a Sáb, 9h às 18h"
+  },
+  "produtos": [
+    {
+      "id": 1,
+      "nome": "Sofá Retrátil 3 Lugares",
+      "categoria": "Sala",
+      "descricao": "Tecido suede, assento retrátil e encosto reclinável. 2,10 m.",
+      "preco": 2499.9,
+      "imagem": "img/sofa-retratil.jpg",
+      "destaque": true
+    },
+    {
+      "id": 2,
+      "nome": "Mesa de Jantar 6 Lugares",
+      "categoria": "Sala",
+      "descricao": "Tampo em MDF com acabamento amadeirado e pés em aço.",
+      "preco": 1890,
+      "imagem": "img/mesa-jantar.jpg"
+    },
+    {
+      "id": 3,
+      "nome": "Rack com Painel para TV até 65\"",
+      "categoria": "Sala",
+      "descricao": "Painel com nichos e rack com portas. Cor freijó/off white.",
+      "preco": 1290,
+      "imagem": "img/rack-painel.jpg"
+    },
+    {
+      "id": 4,
+      "nome": "Cama Box Queen",
+      "categoria": "Quarto",
+      "descricao": "Base box com baú, colchão de molas ensacadas.",
+      "preco": 2190,
+      "imagem": "img/cama-box.jpg",
+      "destaque": true
+    },
+    {
+      "id": 5,
+      "nome": "Guarda-roupa 6 Portas",
+      "categoria": "Quarto",
+      "descricao": "Com espelho, 4 gavetas e cabideiros. 2,70 m de largura.",
+      "preco": 2790,
+      "imagem": "img/guarda-roupa.jpg"
+    },
+    {
+      "id": 6,
+      "nome": "Cômoda 5 Gavetas",
+      "categoria": "Quarto",
+      "descricao": "Corrediças metálicas e puxadores embutidos.",
+      "preco": 790,
+      "imagem": "img/comoda.jpg"
+    },
+    {
+      "id": 7,
+      "nome": "Cozinha Compacta 7 Peças",
+      "categoria": "Cozinha",
+      "descricao": "Armário aéreo, balcão com tampo e paneleiro.",
+      "preco": 1590,
+      "imagem": "img/cozinha.jpg"
+    },
+    {
+      "id": 8,
+      "nome": "Escrivaninha com Gaveteiro",
+      "categoria": "Escritório",
+      "descricao": "Ideal para home office. Passa-fio e 3 gavetas.",
+      "preco": 690,
+      "imagem": "img/escrivaninha.jpg"
+    },
+    {
+      "id": 9,
+      "nome": "Poltrona Decorativa",
+      "categoria": "Sala",
+      "descricao": "Estrutura em madeira maciça, tecido bouclê.",
+      "preco": null,
+      "imagem": "img/poltrona.jpg"
+    }
+  ]
+}

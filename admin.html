@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Painel da vitrine</title>
+  <style>
+    :root { --bg:#faf7f2; --card:#fff; --texto:#2b2622; --suave:#7a6f66; --marca:#8a5a3c; --borda:#e4dccf; --ok:#1e9e55; --erro:#c0392b; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--texto); line-height: 1.45; padding-bottom: 90px; }
+    header { position: sticky; top: 0; z-index: 5; background: var(--marca); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 1.05rem; }
+    header button { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); border-radius: 8px; padding: 6px 12px; font: inherit; font-size: .85rem; }
+    main { max-width: 720px; margin: 0 auto; padding: 16px; }
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tabs button { flex: 1; padding: 10px; border: 1px solid var(--borda); background: var(--card); border-radius: 10px; font: inherit; font-weight: 600; color: var(--suave); }
+    .tabs button.on { background: var(--marca); color: #fff; border-color: var(--marca); }
+    .box { background: var(--card); border: 1px solid var(--borda); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+    label { display: block; font-size: .85rem; font-weight: 600; margin: 12px 0 4px; }
+    label small { font-weight: 400; color: var(--suave); }
+    input[type=text], input[type=password], input[type=url], textarea, select {
+      width: 100%; padding: 11px 12px; border: 1px solid var(--borda); border-radius: 10px; font: inherit; background: #fff;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    .linha { display: flex; gap: 12px; }
+    .linha > * { flex: 1; }
+    .check { display: flex; align-items: center; gap: 8px; font-weight: 500; margin: 14px 0 0; }
+    .check input { width: 20px; height: 20px; }
+    .btn { display: block; width: 100%; padding: 13px; border: 0; border-radius: 10px; font: inherit; font-weight: 700; background: var(--marca); color: #fff; margin-top: 16px; cursor: pointer; }
+    .btn--sec { background: #efe7db; color: var(--texto); }
+    .btn--del { background: #fbe9e7; color: var(--erro); }
+    .btn:disabled { opacity: .5; }
+    .ajuda { font-size: .85rem; color: var(--suave); margin-top: 8px; }
+    .ajuda ol { margin: 8px 0 0 20px; }
+    .item { display: flex; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--borda); }
+    .item:last-child { border-bottom: 0; }
+    .thumb { width: 64px; height: 64px; border-radius: 10px; background: #efe7db; object-fit: cover; flex: none; display: grid; place-items: center; color: #b9a58f; font-size: 1.4rem; overflow: hidden; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .item .info { flex: 1; min-width: 0; }
+    .item .info b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item .info span { font-size: .85rem; color: var(--suave); }
+    .item .acoes { display: flex; flex-direction: column; gap: 4px; }
+    .mini { border: 1px solid var(--borda); background: #fff; border-radius: 8px; padding: 5px 10px; font: inherit; font-size: .8rem; }
+    .selo { font-size: .7rem; background: #efe7db; border-radius: 999px; padding: 2px 8px; margin-left: 4px; }
+    .preview { width: 100%; aspect-ratio: 4/3; border-radius: 12px; background: #efe7db; object-fit: cover; display: block; margin-top: 6px; }
+    .fab { position: fixed; right: 16px; bottom: 16px; background: var(--marca); color: #fff; border: 0; border-radius: 999px; padding: 14px 22px; font: inherit; font-weight: 700; box-shadow: 0 6px 18px rgba(0,0,0,.25); }
+    #toast { position: fixed; left: 50%; bottom: 80px; transform: translateX(-50%); background: #2b2622; color: #fff; padding: 12px 18px; border-radius: 10px; font-size: .9rem; max-width: 90%; display: none; z-index: 20; text-align: center; }
+    #toast.erro { background: var(--erro); }
+    #toast.ok { background: var(--ok); }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Painel da vitrine</h1>
+    <button id="sair" hidden>Sair</button>
+  </header>
+
+  <main>
+    <!-- LOGIN -->
+    <section id="tela-login">
+      <div class="box">
+        <h2>Conectar ao GitHub</h2>
+        <p class="ajuda">Esta página altera os arquivos do seu site direto no GitHub. Os dados de acesso ficam salvos só neste aparelho.</p>
+        <label>Token de acesso <input type="password" id="c-token" autocomplete="off" /></label>
+        <button class="btn" id="conectar">Entrar</button>
+        <details class="ajuda">
+          <summary>Opções avançadas (só se der erro ao entrar)</summary>
+          <label>Usuário do GitHub <input type="text" id="c-owner" autocapitalize="none" autocomplete="off" /></label>
+          <label>Nome do repositório <input type="text" id="c-repo" autocapitalize="none" autocomplete="off" /></label>
+        </details>
+        <div class="ajuda">
+          <b>Como gerar o token (uma vez só):</b>
+          <ol>
+            <li>No GitHub: Settings → Developer settings → Personal access tokens → <b>Fine-grained tokens</b> → Generate new token.</li>
+            <li>Em <i>Repository access</i>, escolha <b>Only select repositories</b> e marque só o repositório da vitrine.</li>
+            <li>Em <i>Permissions → Repository permissions</i>, coloque <b>Contents: Read and write</b>.</li>
+            <li>Gere, copie o token e cole acima.</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- APP -->
+    <section id="tela-app" hidden>
+      <div class="tabs">
+        <button data-aba="produtos" class="on">Produtos</button>
+        <button data-aba="loja">Loja</button>
+      </div>
+
+      <div id="aba-produtos">
+        <div class="box" id="lista"></div>
+        <p class="ajuda">Depois de salvar, o site leva cerca de 1 minuto para mostrar a mudança.</p>
+      </div>
+
+      <div id="aba-loja" hidden>
+        <div class="box">
+          <label>Nome da loja <input type="text" id="l-nome" /></label>
+          <label>Frase de destaque <input type="text" id="l-slogan" /></label>
+          <label>WhatsApp <small>(com código do país e DDD, só números. Ex.: 5521999998888)</small>
+            <input type="text" id="l-whatsapp" inputmode="numeric" /></label>
+          <label>Instagram <small>(link, opcional)</small> <input type="url" id="l-instagram" /></label>
+          <label>Endereço <input type="text" id="l-endereco" /></label>
+          <label>Horário <input type="text" id="l-horario" /></label>
+          <button class="btn" id="salvar-loja">Salvar dados da loja</button>
+        </div>
+      </div>
+
+      <button class="fab" id="novo">+ Novo móvel</button>
+    </section>
+
+    <!-- FORM PRODUTO -->
+    <section id="tela-form" hidden>
+      <div class="box">
+        <h2 id="form-titulo">Novo móvel</h2>
+        <label>Foto
+          <input type="file" id="f-foto" accept="image/*" />
+        </label>
+        <img class="preview" id="f-preview" alt="" hidden />
+        <label>Nome <input type="text" id="f-nome" /></label>
+        <label>Categoria <small>(escolha uma existente ou digite uma nova)</small>
+          <input type="text" id="f-cat" list="cats" /></label>
+        <datalist id="cats"></datalist>
+        <label>Descrição <textarea id="f-desc"></textarea></label>
+        <label>Preço <small>(em branco = "sob consulta")</small>
+          <input type="text" id="f-preco" inputmode="decimal" placeholder="Ex.: 2499,90" /></label>
+        <label class="check"><input type="checkbox" id="f-dest" /> Mostrar etiqueta "Destaque"</label>
+        <label class="check"><input type="checkbox" id="f-esg" /> Marcar como esgotado</label>
+        <button class="btn" id="f-salvar">Salvar</button>
+        <button class="btn btn--sec" id="f-cancelar">Cancelar</button>
+        <button class="btn btn--del" id="f-excluir" hidden>Excluir este móvel</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast"></div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const CFG_KEY = "vitrine_admin_cfg";
+  const JSON_PATH = "produtos.json";
+
+  let cfg = null;
+  let data = null;
+  let editando = null; // produto sendo editado (null = novo)
+  let fotoNova = null; // { b64, url }
+
+  // ---------- utilidades ----------
+  function toast(msg, tipo, ms) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.className = tipo || "";
+    t.style.display = "block";
+    clearTimeout(toast._t);
+    if (ms !== 0) toast._t = setTimeout(() => (t.style.display = "none"), ms || 3500);
+  }
+  const enc = (s) => btoa(unescape(encodeURIComponent(s)));
+  const dec = (b) => decodeURIComponent(escape(atob(b.replace(/\n/g, ""))));
+  const slug = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40) || "foto";
+  const brl = (v) => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  function parsePreco(txt) {
+    let s = (txt || "").replace(/[R$\s]/g, "");
+    if (!s) return null;
+    if (s.includes(",")) s = s.replace(/\./g, "").replace(",", ".");
+    else if (!/^\d+\.\d{1,2}$/.test(s)) s = s.replace(/\./g, "");
+    const n = parseFloat(s);
+    return isNaN(n) ? NaN : n;
+  }
+
+  // ---------- API do GitHub ----------
+  function api(path, opts) {
+    opts = opts || {};
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${path}` +
+      (!opts.method || opts.method === "GET" ? `?ref=${encodeURIComponent(cfg.branch)}&t=${Date.now()}` : "");
+    return fetch(url, {
+      ...opts,
+      headers: { Authorization: "Bearer " + cfg.token, Accept: "application/vnd.github+json", ...(opts.headers || {}) },
+    });
+  }
+  async function getFile(path) {
+    const r = await api(path);
+    if (r.status === 404) return null;
+    if (r.status === 401 || r.status === 403) throw new Error("Token sem permissão. Confira o token e a permissão Contents: Read and write.");
+    if (!r.ok) throw new Error("Erro do GitHub (" + r.status + ")");
+    return r.json();
+  }
+  async function putFile(path, b64, msg, sha) {
+    const body = { message: msg, content: b64, branch: cfg.branch };
+    if (sha) body.sha = sha;
+    const r = await api(path, { method: "PUT", body: JSON.stringify(body) });
+    if (!r.ok) {
+      const e = await r.json().catch(() => ({}));
+      throw new Error(e.message || "Falha ao salvar (" + r.status + ")");
+    }
+    return r.json();
+  }
+  async function deleteFile(path, msg) {
+    try {
+      const f = await getFile(path);
+      if (!f) return;
+      await api(path, { method: "DELETE", body: JSON.stringify({ message: msg, sha: f.sha, branch: cfg.branch }) });
+    } catch (e) { /* melhor esforço */ }
+  }
+  async function carregar() {
+    const f = await getFile(JSON_PATH);
+    if (!f) throw new Error("Arquivo produtos.json não encontrado nesse repositório/branch.");
+    data = JSON.parse(dec(f.content));
+    data.produtos = data.produtos || [];
+    data.loja = data.loja || {};
+  }
+  // Sempre relê o arquivo antes de alterar, para não sobrescrever mudanças feitas em outro aparelho
+  async function alterar(fn, msg) {
+    const f = await getFile(JSON_PATH);
+    const atual = JSON.parse(dec(f.content));
+    atual.produtos = atual.produtos || [];
+    atual.loja = atual.loja || {};
+    fn(atual);
+    await putFile(JSON_PATH, enc(JSON.stringify(atual, null, 2) + "\n"), msg, f.sha);
+    data = atual;
+  }
+
+  // ---------- telas ----------
+  function mostrar(qual) {
+    ["login", "app", "form"].forEach((t) => ($("tela-" + t).hidden = t !== qual));
+    $("sair").hidden = qual === "login";
+    window.scrollTo(0, 0);
+  }
+
+  function renderLista() {
+    const box = $("lista");
+    box.innerHTML = "";
+    if (!data.produtos.length) {
+      box.innerHTML = '<p class="ajuda">Nenhum móvel ainda. Toque em "+ Novo móvel".</p>';
+      return;
+    }
+    data.produtos.forEach((p, i) => {
+      const row = document.createElement("div");
+      row.className = "item";
+      const th = document.createElement("div");
+      th.className = "thumb";
+      if (p.imagem) {
+        const im = document.createElement("img");
+        im.src = p.imagem; im.alt = "";
+        im.onerror = () => { im.remove(); th.textContent = "🛋"; };
+        th.appendChild(im);
+      } else th.textContent = "🛋";
+      const info = document.createElement("div");
+      info.className = "info";
+      const b = document.createElement("b");
+      b.textContent = p.nome;
+      if (p.esgotado) { const s = document.createElement("span"); s.className = "selo"; s.textContent = "esgotado"; b.appendChild(s); }
+      const sp = document.createElement("span");
+      sp.textContent = (p.categoria || "—") + " · " + (p.preco != null ? brl(p.preco) : "sob consulta");
+      info.append(b, sp);
+      const ac = document.createElement("div");
+      ac.className = "acoes";
+      const ed = document.createElement("button"); ed.className = "mini"; ed.textContent = "Editar"; ed.onclick = () => abrirForm(p);
+      const mv = document.createElement("div"); mv.style.display = "flex"; mv.style.gap = "4px";
+      const up = document.createElement("button"); up.className = "mini"; up.textContent = "↑"; up.disabled = i === 0; up.onclick = () => mover(p.id, -1);
+      const dn = document.createElement("button"); dn.className = "mini"; dn.textContent = "↓"; dn.disabled = i === data.produtos.length - 1; dn.onclick = () => mover(p.id, 1);
+      mv.append(up, dn);
+      ac.append(ed, mv);
+      row.append(th, info, ac);
+      box.appendChild(row);
+    });
+  }
+
+  function renderLoja() {
+    const l = data.loja;
+    $("l-nome").value = l.nome || "";
+    $("l-slogan").value = l.slogan || "";
+    $("l-whatsapp").value = l.whatsapp || "";
+    $("l-instagram").value = l.instagram || "";
+    $("l-endereco").value = l.endereco || "";
+    $("l-horario").value = l.horario || "";
+  }
+
+  function abrirForm(p) {
+    editando = p || null;
+    fotoNova = null;
+    $("form-titulo").textContent = p ? "Editar móvel" : "Novo móvel";
+    $("f-foto").value = "";
+    $("f-nome").value = p ? p.nome : "";
+    $("f-cat").value = p ? p.categoria || "" : "";
+    $("f-desc").value = p ? p.descricao || "" : "";
+    $("f-preco").value = p && p.preco != null ? String(p.preco).replace(".", ",") : "";
+    $("f-dest").checked = !!(p && p.destaque);
+    $("f-esg").checked = !!(p && p.esgotado);
+    $("f-excluir").hidden = !p;
+    const pv = $("f-preview");
+    if (p && p.imagem) { pv.src = p.imagem; pv.hidden = false; } else { pv.removeAttribute("src"); pv.hidden = true; }
+    $("cats").innerHTML = [...new Set(data.produtos.map((x) => x.categoria).filter(Boolean))].map((c) => `<option value="${c.replace(/"/g, "&quot;")}">`).join("");
+    mostrar("form");
+  }
+
+  // ---------- foto: reduz antes de enviar ----------
+  async function processarFoto(file) {
+    const bmp = await createImageBitmap(file);
+    const max = 1200;
+    const k = Math.min(1, max / Math.max(bmp.width, bmp.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(bmp.width * k);
+    c.height = Math.round(bmp.height * k);
+    const ctx = c.getContext("2d");
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(bmp, 0, 0, c.width, c.height);
+    const blob = await new Promise((r) => c.toBlob(r, "image/jpeg", 0.82));
+    const b64 = await new Promise((res) => {
+      const fr = new FileReader();
+      fr.onload = () => res(fr.result.split(",")[1]);
+      fr.readAsDataURL(blob);
+    });
+    return { b64, url: URL.createObjectURL(blob) };
+  }
+
+  // ---------- ações ----------
+  async function mover(id, dir) {
+    try {
+      toast("Salvando...", "", 0);
+      await alterar((d) => {
+        const i = d.produtos.findIndex((x) => x.id === id);
+        const j = i + dir;
+        if (i < 0 || j < 0 || j >= d.produtos.length) return;
+        [d.produtos[i], d.produtos[j]] = [d.produtos[j], d.produtos[i]];
+      }, "Reordenar produtos");
+      renderLista();
+      toast("Ordem salva", "ok");
+    } catch (e) { toast(e.message, "erro", 6000); }
+  }
+
+  async function salvarProduto() {
+    const nome = $("f-nome").value.trim();
+    if (!nome) return toast("Digite o nome do móvel", "erro");
+    const preco = parsePreco($("f-preco").value);
+    if (Number.isNaN(preco)) return toast("Preço inválido. Use algo como 2499,90", "erro");
+
+    const btn = $("f-salvar");
+    btn.disabled = true;
+    try {
+      toast("Enviando... aguarde", "", 0);
+      const campos = {
+        nome,
+        categoria: $("f-cat").value.trim(),
+        descricao: $("f-desc").value.trim(),
+        preco,
+        destaque: $("f-dest").checked,
+        esgotado: $("f-esg").checked,
+      };
+      let imagemAntiga = null;
+      if (fotoNova) {
+        const caminho = "img/" + slug(nome) + "-" + Date.now().toString(36) + ".jpg";
+        await putFile(caminho, fotoNova.b64, "Foto: " + nome);
+        campos.imagem = caminho;
+        imagemAntiga = editando && editando.imagem;
+      }
+      await alterar((d) => {
+        if (editando) {
+          const i = d.produtos.findIndex((x) => x.id === editando.id);
+          if (i >= 0) d.produtos[i] = { ...d.produtos[i], ...campos };
+          else d.produtos.push({ id: editando.id, ...campos });
+        } else {
+          campos.id = Math.max(0, ...d.produtos.map((x) => x.id || 0)) + 1;
+          if (!campos.imagem) campos.imagem = "";
+          d.produtos.push(campos);
+        }
+      }, (editando ? "Atualiza: " : "Adiciona: ") + nome);
+      if (imagemAntiga && imagemAntiga.startsWith("img/") && !data.produtos.some((x) => x.imagem === imagemAntiga)) {
+        await deleteFile(imagemAntiga, "Remove foto antiga");
+      }
+      renderLista();
+      mostrar("app");
+      toast("Salvo! O site atualiza em ~1 minuto.", "ok", 5000);
+    } catch (e) {
+      toast(e.message, "erro", 7000);
+    } finally { btn.disabled = false; }
+  }
+
+  async function excluirProduto() {
+    if (!editando || !confirm('Excluir "' + editando.nome + '"?')) return;
+    try {
+      toast("Excluindo...", "", 0);
+      const img = editando.imagem;
+      await alterar((d) => { d.produtos = d.produtos.filter((x) => x.id !== editando.id); }, "Remove: " + editando.nome);
+      if (img && img.startsWith("img/") && !data.produtos.some((x) => x.imagem === img)) await deleteFile(img, "Remove foto");
+      renderLista();
+      mostrar("app");
+      toast("Excluído. O site atualiza em ~1 minuto.", "ok", 5000);
+    } catch (e) { toast(e.message, "erro", 7000); }
+  }
+
+  async function salvarLoja() {
+    const zap = $("l-whatsapp").value.replace(/\D/g, "");
+    if (zap.length < 10) return toast("WhatsApp inválido. Use código do país + DDD + número", "erro", 5000);
+    try {
+      toast("Salvando...", "", 0);
+      await alterar((d) => {
+        d.loja = {
+          nome: $("l-nome").value.trim(),
+          slogan: $("l-slogan").value.trim(),
+          whatsapp: zap,
+          instagram: $("l-instagram").value.trim(),
+          endereco: $("l-endereco").value.trim(),
+          horario: $("l-horario").value.trim(),
+        };
+      }, "Atualiza dados da loja");
+      toast("Salvo! O site atualiza em ~1 minuto.", "ok", 5000);
+    } catch (e) { toast(e.message, "erro", 7000); }
+  }
+
+  // Descobre usuário/repositório/branch a partir do endereço da página ou da lista de repositórios do token
+  const gh = (url, token) => fetch("https://api.github.com" + url, {
+    headers: { Authorization: "Bearer " + token, Accept: "application/vnd.github+json" },
+  });
+  async function descobrir(token) {
+    const erroToken = new Error("Token inválido ou expirado. Gere um novo e tente de novo.");
+    const cands = [];
+    const o = $("c-owner").value.trim(), r0 = $("c-repo").value.trim();
+    if (o && r0) cands.push({ owner: o, repo: r0 });
+    const h = location.hostname;
+    if (h.endsWith(".github.io")) {
+      const seg = location.pathname.split("/")[1];
+      cands.push({ owner: h.split(".")[0], repo: seg && !seg.includes(".") ? seg : h });
+    }
+    for (const c of cands) {
+      const r = await gh(`/repos/${c.owner}/${c.repo}`, token);
+      if (r.status === 401) throw erroToken;
+      if (r.ok) { const j = await r.json(); return { ...c, branch: j.default_branch }; }
+    }
+    const r = await gh("/user/repos?per_page=100&sort=pushed", token);
+    if (r.status === 401) throw erroToken;
+    if (r.ok) {
+      const lista = await r.json();
+      for (const repo of lista.slice(0, 15)) {
+        const t = await gh(`/repos/${repo.full_name}/contents/produtos.json?ref=${encodeURIComponent(repo.default_branch)}`, token);
+        if (t.ok) {
+          const [owner, nome] = repo.full_name.split("/");
+          return { owner, repo: nome, branch: repo.default_branch };
+        }
+      }
+    }
+    throw new Error('Não encontrei o repositório da vitrine. Abra "Opções avançadas" e informe usuário e repositório.');
+  }
+
+  async function entrar() {
+    const token = $("c-token").value.trim();
+    if (!token) return toast("Cole o token", "erro");
+    try {
+      toast("Entrando...", "", 0);
+      cfg = { ...(await descobrir(token)), token };
+      await carregar();
+      localStorage.setItem(CFG_KEY, JSON.stringify(cfg));
+      renderLista(); renderLoja();
+      mostrar("app");
+      toast("Conectado", "ok", 1500);
+    } catch (e) { toast(e.message, "erro", 7000); }
+  }
+
+  // ---------- eventos ----------
+  $("conectar").onclick = entrar;
+  $("sair").onclick = () => { localStorage.removeItem(CFG_KEY); cfg = null; $("c-token").value = ""; mostrar("login"); };
+  $("novo").onclick = () => abrirForm(null);
+  $("f-cancelar").onclick = () => mostrar("app");
+  $("f-salvar").onclick = salvarProduto;
+  $("f-excluir").onclick = excluirProduto;
+  $("salvar-loja").onclick = salvarLoja;
+  $("f-foto").onchange = async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    try {
+      fotoNova = await processarFoto(f);
+      const pv = $("f-preview");
+      pv.src = fotoNova.url; pv.hidden = false;
+    } catch (err) { toast("Não consegui ler essa imagem", "erro"); }
+  };
+  document.querySelectorAll(".tabs button").forEach((b) => {
+    b.onclick = () => {
+      document.querySelectorAll(".tabs button").forEach((x) => x.classList.toggle("on", x === b));
+      $("aba-produtos").hidden = b.dataset.aba !== "produtos";
+      $("aba-loja").hidden = b.dataset.aba !== "loja";
+      $("novo").hidden = b.dataset.aba !== "produtos";
+    };
+  });
+
+  // ---------- início ----------
+  try { cfg = JSON.parse(localStorage.getItem(CFG_KEY) || "null"); } catch (e) { cfg = null; }
+  if (cfg && cfg.token) {
+    carregar().then(() => { renderLista(); renderLoja(); mostrar("app"); })
+      .catch((e) => { toast(e.message, "erro", 6000); mostrar("login"); });
+  } else {
+    mostrar("login");
+  }
+})();
+</script>
+</body>
+</html>
