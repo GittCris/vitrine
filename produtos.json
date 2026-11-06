@@ -14,7 +14,9 @@
       "categoria": "Sala",
       "descricao": "Tampo em MDF com acabamento amadeirado e pés em aço.",
       "preco": 1890,
-      "imagem": "img/mesa-jantar.jpg"
+      "imagem": "img/mesa-de-jantar-6-lugares-mw54lm2d.jpg",
+      "destaque": false,
+      "esgotado": false
     },
     {
       "id": 1,
